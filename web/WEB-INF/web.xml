@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <context-param>
+        <param-name>wsdl-url</param-name>
+        <param-value>http://localhost:8080/WebApplication1/Hello?wsdl</param-value>
+    </context-param>
+    <context-param>
+        <param-name>servidor</param-name>
+        <param-value>127.0.0.1</param-value>
+    </context-param>
+    <context-param>
+        <param-name>puertobd</param-name>
+        <param-value>5432</param-value>
+    </context-param>
+    <context-param>
+        <param-name>basededatos</param-name>
+        <param-value>HciIngenio</param-value>
+    </context-param>
+    <context-param>
+        <param-name>usuariobd</param-name>
+        <param-value>usringenio</param-value>
+    </context-param>
+    <context-param>
+        <param-name>clavebd</param-name>
+        <param-value>usringenio</param-value>
+    </context-param>
+    <context-param>
+        <param-name>conexionesiniciales</param-name>
+        <param-value>3</param-value>
+    </context-param>
+    <context-param>
+        <param-name>conexionesmaximas</param-name>
+        <param-value>100</param-value>
+    </context-param>
+</web-app>
