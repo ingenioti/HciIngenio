@@ -56,9 +56,9 @@ public class SPruebas extends HttpServlet {
     }
 
     public String getPerfiles(){
-        System.err.println("Entro a buscar los perfiles");
+        //System.err.println("Entro a buscar los perfiles");
         String datos = "";
-        Connection conexion = NUtilidades.getConexion(getServletContext());
+        Connection conexion = NUtilidades.getConexion();
         CallableStatement llamadaSentencia=null;
         ResultSet resultados=null;
         try {

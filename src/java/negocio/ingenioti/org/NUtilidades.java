@@ -16,6 +16,15 @@ import javax.servlet.ServletContext;
 public final class NUtilidades {
     private static PGPoolingDataSource piscina = null;
     private static ServletContext contextoApp;
+    private static boolean creado = false;
+    
+    public static boolean contextoCreado(){
+        return creado;
+    }
+    public static void creaPiscina(ServletContext contexto){
+        contextoApp = contexto;
+        setPiscina();
+    }
     
     private static void setPiscina(){
         String servidor = contextoApp.getInitParameter("servidor");
@@ -34,22 +43,21 @@ public final class NUtilidades {
         piscina.setPassword(clavebda);
         piscina.setInitialConnections(conexionesiniciales);
         piscina.setMaxConnections(conexionesmaximas);
-        System.err.println("He entrado a la piscina");
+        creado = true;
     }
     
-    public static Connection getConexion(ServletContext contexto){
+    public static Connection getConexion(){
         Connection conexion = null;
-        contextoApp = contexto;
         if(piscina==null){
             setPiscina();
             if(piscina==null){
-                System.err.println("No fue posible cargar la piscina de conexiones");
+                System.err.println("Error en NUtilidades.java No fue posible cargar la piscina de conexiones");
             }
         } else {
             try{
                 conexion = piscina.getConnection();
             } catch (SQLException sqle){
-                System.err.println("Error de sql: "+sqle.getMessage());
+                System.err.println("Error en NUtiliades.java Error de sql: "+sqle.getMessage());
             }
         }
         return conexion;
