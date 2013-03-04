@@ -17,6 +17,9 @@ public final class NUtilidades {
     private static PGPoolingDataSource piscina = null;
     private static ServletContext contextoApp;
     private static boolean creado = false;
+    public static final byte MENSAJE_ERROR = 0;
+    public static final byte MENSAJE_INFO  = 1;
+    public static final byte MENSAJE_CORRECTO = 2;
     
     public static boolean contextoCreado(){
         return creado;
@@ -46,7 +49,7 @@ public final class NUtilidades {
         creado = true;
     }
     
-    public static Connection getConexion(){
+    public static Connection getConexion() throws SQLException{
         Connection conexion = null;
         if(piscina==null){
             setPiscina();
@@ -54,11 +57,11 @@ public final class NUtilidades {
                 System.err.println("Error en NUtilidades.java No fue posible cargar la piscina de conexiones");
             }
         } else {
-            try{
+            //try{
                 conexion = piscina.getConnection();
-            } catch (SQLException sqle){
-                System.err.println("Error en NUtiliades.java Error de sql: "+sqle.getMessage());
-            }
+            //} catch (SQLException sqle){
+                //System.err.println("Error en NUtiliades.java Error de sql: "+sqle.getMessage());
+            //}
         }
         return conexion;
     }

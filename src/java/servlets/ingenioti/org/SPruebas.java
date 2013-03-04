@@ -58,10 +58,11 @@ public class SPruebas extends HttpServlet {
     public String getPerfiles(){
         //System.err.println("Entro a buscar los perfiles");
         String datos = "";
-        Connection conexion = NUtilidades.getConexion();
+        Connection conexion = null;
         CallableStatement llamadaSentencia=null;
         ResultSet resultados=null;
         try {
+            conexion = NUtilidades.getConexion();
             String consulta = "select * from fn_perfiles_sel(?,?,?,?)";
             llamadaSentencia = conexion.prepareCall(consulta);
             llamadaSentencia.setShort(1, Short.parseShort(String.valueOf(0))); // Tipo de consulta
@@ -133,6 +134,6 @@ public class SPruebas extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Esta es una prueba";
     }// </editor-fold>
 }

@@ -11,6 +11,11 @@
         <meta charset="UTF-8">
         <title>JSP Page</title>
         <script src="js/jquery-1.9.1.min.js"></script>
+        <link rel="stylesheet" href="css/estilo.css" />
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <div id="estadoContexto"></div>
         <script>
             $(document).on('ready',cargaConfiguracion);
             function cargaConfiguracion(){
@@ -19,27 +24,35 @@
                     type: 'post',
                     dataType: 'xml',
                     success: function(informacion){
+                        var elTipo = 0;
                         var elMensaje = "";
                         $(informacion).find('mensaje').each(function(){
+                            elTipo = parseInt($(this).find('tipo').text());
                             elMensaje = $(this).find('info').text();
                         });
+                        switch(elTipo){
+                            case 0:
+                                $("#estadoContexto").addClass("error");
+                                break;
+                            case 1:
+                                $("#estadoContexto").addClass("info");
+                                break;
+                            case 2:
+                                $("#estadoContexto").addClass("correcto");
+                                break;
+                        }
                         $("#estadoContexto").html(elMensaje);
-                        console.log(informacion);
                     },
                     error: function(jqXHR,estado,elerror){
                         $("#estadoContexto").html(elerror);
                         console.log(estado);
                         console.log(elerror);
                     },
-                    complete: function(jqXHR, estado){
-                        console.log(estado);
-                    }
+                    //complete: function(jqXHR, estado){
+                    //    console.log(estado);
+                    //}
                 });
             }
         </script>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-        <div id="estadoContexto"></div>
     </body>
 </html>

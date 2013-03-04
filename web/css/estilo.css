@@ -1,0 +1,40 @@
+/* 
+    Document   : estilo
+    Created on : 3/03/2013, 07:14:51 PM
+    Author     : Alexys
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/*********************/
+/*** TAGS          ***/
+/*********************/
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+/***********************/
+/*** CLASES          ***/
+/***********************/
+.correcto{
+    background-color: #6666ff;
+    color: white;
+    font-weight: bold;
+}
+
+.error{
+    background-color: #ff6633;
+    color: white;
+    font-weight: bold;    
+}
+
+.info{
+    background-color: #ffcc00;
+    color: white;
+    font-weight: bold;    
+}
+/*********************/
+/*** DIVS          ***/
+/*********************/
