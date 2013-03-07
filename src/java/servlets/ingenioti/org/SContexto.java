@@ -42,44 +42,43 @@ public class SContexto extends HttpServlet {
         String mensaje = "";
         byte tipoMensaje = NUtilidades.MENSAJE_ERROR;
         
-        try {
-            /* TODO output your page here. You may use following sample code. */
-            if(!NUtilidades.contextoCreado()){
+        try { // Try que permite enviar el mensaje por medio del objeto out
+            if(!NUtilidades.contextoCreado()){ // Si entra al sistema por primera vez se envía el contexto
                 NUtilidades.creaPiscina(getServletContext());
-                Connection conexion = null;
-                Statement sentencia = null;
-                ResultSet resultados = null;
-                try{
-                    conexion = NUtilidades.getConexion();
-                    sentencia = conexion.createStatement();
-                    resultados = sentencia.executeQuery("select now()");
-                    if(resultados.next()){
-                        tipoMensaje = NUtilidades.MENSAJE_CORRECTO;
-                        mensaje = "Conexión correcta a la BD el: "+resultados.getString(1);
-                    } else {
-                        tipoMensaje = NUtilidades.MENSAJE_INFO;
-                        mensaje = "No hubo resultados al traer la fecha del servidor de BD";
-                    }
-                } catch (SQLException sqle){
-                    System.out.println("Error al obtener la conexion en SContexto.java: "+sqle.getMessage());
-                    tipoMensaje = NUtilidades.MENSAJE_ERROR;
-                    mensaje = "Error al obtener la conexion en SContexto.java: "+sqle.getMessage();
-                } finally {
-                    if(resultados!=null){
-                        try{
-                            resultados.close();
-                        } catch (SQLException sqle){}
-                    }
-                    if(sentencia!=null){
-                        try{
-                            sentencia.close();
-                        } catch (SQLException sqle){}
-                    }
-                    if(conexion!=null){
-                        try{
-                            conexion.close();
-                        } catch (SQLException sqle){}
-                    }
+            }
+            Connection conexion = null;
+            Statement sentencia = null;
+            ResultSet resultados = null;
+            try{
+                conexion = NUtilidades.getConexion();
+                sentencia = conexion.createStatement();
+                resultados = sentencia.executeQuery("select now()");
+                if(resultados.next()){
+                    tipoMensaje = NUtilidades.MENSAJE_CORRECTO;
+                    mensaje = "Conexión correcta a la BD el: "+resultados.getString(1);
+                } else {
+                    tipoMensaje = NUtilidades.MENSAJE_INFO;
+                    mensaje = "No hubo resultados al traer la fecha del servidor de BD";
+                }
+            } catch (SQLException sqle){
+                System.out.println("Error al obtener la conexion en SContexto.java: "+sqle.getMessage());
+                tipoMensaje = NUtilidades.MENSAJE_ERROR;
+                mensaje = "Error al obtener la conexion en SContexto.java: "+sqle.getMessage();
+            } finally {
+                if(resultados!=null){
+                    try{
+                        resultados.close();
+                    } catch (SQLException sqle){}
+                }
+                if(sentencia!=null){
+                    try{
+                        sentencia.close();
+                    } catch (SQLException sqle){}
+                }
+                if(conexion!=null){
+                    try{
+                        conexion.close();
+                    } catch (SQLException sqle){}
                 }
             }
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");

@@ -55,13 +55,11 @@ public final class NUtilidades {
             setPiscina();
             if(piscina==null){
                 System.err.println("Error en NUtilidades.java No fue posible cargar la piscina de conexiones");
+            } else {
+                conexion = piscina.getConnection();
             }
         } else {
-            //try{
-                conexion = piscina.getConnection();
-            //} catch (SQLException sqle){
-                //System.err.println("Error en NUtiliades.java Error de sql: "+sqle.getMessage());
-            //}
+            conexion = piscina.getConnection();
         }
         return conexion;
     }

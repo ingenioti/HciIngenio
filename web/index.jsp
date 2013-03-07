@@ -3,7 +3,6 @@
     Created on : 24/02/2013, 07:48:44 PM
     Author     : Alexys
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -14,8 +13,34 @@
         <link rel="stylesheet" href="css/estilo.css" />
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <div id="estadoContexto"></div>
+        <header>
+        <h1>HCI Ingenio T.I.</h1>
+        </header>
+        <section id="ingreso">
+            <div id="ingresar">
+                <form action="" method="post">
+                    <fieldset>
+                        <legend>Autenticación</legend>
+                        <div class="tipoTabla">
+                            <div class="tipoFila">
+                            <label for="txtUsr" class="tipoCelda">Usuario</label>
+                            <input type="text" autocomplete="false" id="txtUsr" name="txtUsr" placeholder="Digita tu usuario" />
+                            </div>
+                            <div class="tipoFila">
+                            <label for="txtPwd" class="tipoCelda">Clave</label>
+                            <input type="password" autocomplete="false" id="txtPwd" name="txtPwd" placeholder="Clave" />
+                            </div>
+                            <div class="tipoFila">
+                            <input type="submit" name="btnEnviar" value="Ingresar"/>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+        <section>
+            <div id="estadoContexto"></div>
+        </section>
         <script>
             $(document).on('ready',cargaConfiguracion);
             function cargaConfiguracion(){
@@ -47,7 +72,7 @@
                         $("#estadoContexto").html(elerror);
                         console.log(estado);
                         console.log(elerror);
-                    },
+                    }
                     //complete: function(jqXHR, estado){
                     //    console.log(estado);
                     //}
