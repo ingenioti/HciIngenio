@@ -1,0 +1,1644 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.2.3
+-- Dumped by pg_dump version 9.2.3
+-- Started on 2013-03-06 21:25:06
+
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 2027 (class 1262 OID 16395)
+-- Dependencies: 2026
+-- Name: HciIngenio; Type: COMMENT; Schema: -; Owner: usringenio
+--
+
+COMMENT ON DATABASE "HciIngenio" IS 'Base de datos del programa Hci Ingenio';
+
+
+--
+-- TOC entry 179 (class 3079 OID 11727)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2030 (class 0 OID 0)
+-- Dependencies: 179
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 573 (class 1247 OID 32770)
+-- Name: t_usuarios; Type: TYPE; Schema: public; Owner: usringenio
+--
+
+CREATE TYPE t_usuarios AS (
+	idusuario integer,
+	codigo character varying(25),
+	nombres character varying(50),
+	apellidos character varying(50),
+	idperfil smallint,
+	perfil character varying(25),
+	perfilactivo boolean,
+	ultimoingreso timestamp without time zone,
+	bloqueado boolean,
+	correo character varying(100)
+);
+
+
+ALTER TYPE public.t_usuarios OWNER TO usringenio;
+
+--
+-- TOC entry 207 (class 1255 OID 24605)
+-- Name: fn_configuracion_del(smallint); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_configuracion_del(smallint) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	idconf alias for $1;
+BEGIN
+	delete from configuracion where idconfiguracion = idconf;
+	if found then
+		return 1; -- Se borro correctamente
+	else
+		return 0; -- Error de la base de datos
+	end if;
+END;
+$_$;
+
+
+ALTER FUNCTION public.fn_configuracion_del(smallint) OWNER TO usringenio;
+
+--
+-- TOC entry 2031 (class 0 OID 0)
+-- Dependencies: 207
+-- Name: FUNCTION fn_configuracion_del(smallint); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_configuracion_del(smallint) IS 'Funcion que permite borrar parametros en la tabla configuracion';
+
+
+--
+-- TOC entry 206 (class 1255 OID 24604)
+-- Name: fn_configuracion_ins(character varying, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_configuracion_ins(character varying, character varying, boolean DEFAULT true) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	param alias for $1;
+	valor alias for $2;
+	activ alias for $3;
+BEGIN
+	insert into configuracion values (default, param, valor, activ);
+	if found then
+		return currval('sqc_configuracion'); -- Se ingreso correctamente el parametro
+	else
+		return 0; -- Error de la base de datos
+	end if;
+END;
+$_$;
+
+
+ALTER FUNCTION public.fn_configuracion_ins(character varying, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2032 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: FUNCTION fn_configuracion_ins(character varying, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_configuracion_ins(character varying, character varying, boolean) IS 'Funcion que permite insertar parametros en la tabla configuracion';
+
+
+--
+-- TOC entry 173 (class 1259 OID 24576)
+-- Name: sqc_configuracion; Type: SEQUENCE; Schema: public; Owner: usringenio
+--
+
+CREATE SEQUENCE sqc_configuracion
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sqc_configuracion OWNER TO usringenio;
+
+--
+-- TOC entry 2033 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: SEQUENCE sqc_configuracion; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON SEQUENCE sqc_configuracion IS 'Secuencia para el consecutivo de la tabla configuracion';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 174 (class 1259 OID 24595)
+-- Name: configuracion; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE configuracion (
+    idconfiguracion smallint DEFAULT nextval('sqc_configuracion'::regclass) NOT NULL,
+    parametro character varying(50) NOT NULL,
+    valorparametro character varying(50) NOT NULL,
+    activo boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.configuracion OWNER TO usringenio;
+
+--
+-- TOC entry 2034 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: TABLE configuracion; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE configuracion IS 'Tabla que contiene la configuracion general del sistema';
+
+
+--
+-- TOC entry 2035 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: COLUMN configuracion.idconfiguracion; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON COLUMN configuracion.idconfiguracion IS 'Consecutivo de configuracion';
+
+
+--
+-- TOC entry 2036 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: COLUMN configuracion.parametro; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON COLUMN configuracion.parametro IS 'Nombre del parametro de configuracion';
+
+
+--
+-- TOC entry 2037 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: COLUMN configuracion.valorparametro; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON COLUMN configuracion.valorparametro IS 'Valor del parametro de configuracion';
+
+
+--
+-- TOC entry 2038 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: COLUMN configuracion.activo; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON COLUMN configuracion.activo IS 'Identifica si el parametro esta activo o no';
+
+
+--
+-- TOC entry 205 (class 1255 OID 24603)
+-- Name: fn_configuracion_sel(smallint, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_configuracion_sel(smallint DEFAULT (-1), character varying DEFAULT 'NINGUNO'::character varying, boolean DEFAULT true) RETURNS SETOF configuracion
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	tipo alias for $1;
+	para alias for $2;
+	acti alias for $3;
+begin
+	if tipo = 0 then -- Consulta todos los parametros
+		return query select idconfiguracion, parametro, valorparametro, activo from configuracion;
+	elsif tipo = 1 then -- Consulta de un parametro especifico
+		return query select idconfiguracion, parametro, valorparametro, activo from configuracion where parametro = upper(para);
+	end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_configuracion_sel(smallint, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2039 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: FUNCTION fn_configuracion_sel(smallint, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_configuracion_sel(smallint, character varying, boolean) IS 'Funcion que consulta los registros de la tabla configuracion';
+
+
+--
+-- TOC entry 208 (class 1255 OID 24606)
+-- Name: fn_configuracion_upd(smallint, character varying, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_configuracion_upd(smallint, character varying, character varying, boolean) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	idconf alias for $1;
+	parame alias for $2;
+	valorp alias for $3;
+	activa alias for $4;
+BEGIN
+	update configuracion set parametro = upper(parame), valorparametro = upper(valorp), activo = activa where idconfiguracion = idconf;
+	if found then
+		return 1; -- Se actualizó correctamente
+	else
+		return 0; -- Error de la base de datos
+	end if;
+END;
+$_$;
+
+
+ALTER FUNCTION public.fn_configuracion_upd(smallint, character varying, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2040 (class 0 OID 0)
+-- Dependencies: 208
+-- Name: FUNCTION fn_configuracion_upd(smallint, character varying, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_configuracion_upd(smallint, character varying, character varying, boolean) IS 'Funcion que permite actualizar parametros en la tabla configuracion';
+
+
+--
+-- TOC entry 212 (class 1255 OID 24648)
+-- Name: fn_credenciales_del(integer); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_credenciales_del(integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idc alias for $1;
+begin
+  delete from credenciales where cre_id=idc;
+  perform fn_credenciales_delall();
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_credenciales_del(integer) OWNER TO usringenio;
+
+--
+-- TOC entry 2041 (class 0 OID 0)
+-- Dependencies: 212
+-- Name: FUNCTION fn_credenciales_del(integer); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_credenciales_del(integer) IS 'Funcion que borra la credencial del usuario actual y llama la funcion de borrado de las credenciales que excedieron el tiempo de inactividad';
+
+
+--
+-- TOC entry 213 (class 1255 OID 24649)
+-- Name: fn_credenciales_delall(); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_credenciales_delall() RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+begin
+  delete from credenciales where (extract(epoch from now()-cre_ultimaaccion)/60)::integer > (select valorparametro::integer from configuracion where parametro = 'TIEMPOCREDENCIAL' limit 1);
+end;
+$$;
+
+
+ALTER FUNCTION public.fn_credenciales_delall() OWNER TO usringenio;
+
+--
+-- TOC entry 2042 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: FUNCTION fn_credenciales_delall(); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_credenciales_delall() IS 'Funcion que borra las credenciales que excedieron el tiempo limite de inactividad';
+
+
+--
+-- TOC entry 214 (class 1255 OID 24650)
+-- Name: fn_credenciales_ins(integer, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_credenciales_ins(integer, character varying, character varying, character varying) RETURNS integer
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idu alias for $1;
+  nom alias for $2;
+  hip alias for $3;
+  hno alias for $4;
+begin
+  insert into credenciales values (default, idu, nom, hip, hno, default, default);
+  if found then
+    return currval('sqc_credencial'); -- Se ingreso correctamente la credencial
+  else
+    return 0; -- Error de la base de datos
+  end if;
+exception
+  when foreign_key_violation then
+    return -1; -- No se puede ingresar un usuario que no existe
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_credenciales_ins(integer, character varying, character varying, character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2043 (class 0 OID 0)
+-- Dependencies: 214
+-- Name: FUNCTION fn_credenciales_ins(integer, character varying, character varying, character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_credenciales_ins(integer, character varying, character varying, character varying) IS 'Funcion que permite ingresar registros a la tabla credenciales';
+
+
+--
+-- TOC entry 168 (class 1259 OID 16410)
+-- Name: sqc_credencial; Type: SEQUENCE; Schema: public; Owner: usringenio
+--
+
+CREATE SEQUENCE sqc_credencial
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+    CYCLE;
+
+
+ALTER TABLE public.sqc_credencial OWNER TO usringenio;
+
+--
+-- TOC entry 2044 (class 0 OID 0)
+-- Dependencies: 168
+-- Name: SEQUENCE sqc_credencial; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON SEQUENCE sqc_credencial IS 'Secuencia de las credenciales';
+
+
+--
+-- TOC entry 177 (class 1259 OID 24635)
+-- Name: credenciales; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE credenciales (
+    cre_id integer DEFAULT nextval('sqc_credencial'::regclass) NOT NULL,
+    cre_idusuario integer NOT NULL,
+    cre_nombre character varying(110) NOT NULL,
+    cre_hostip character varying(50) NOT NULL,
+    cre_hostnombre character varying(50) NOT NULL,
+    cre_creacion timestamp without time zone DEFAULT now() NOT NULL,
+    cre_ultimaaccion timestamp without time zone DEFAULT now() NOT NULL
+);
+
+
+ALTER TABLE public.credenciales OWNER TO usringenio;
+
+--
+-- TOC entry 2045 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: TABLE credenciales; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE credenciales IS 'Tabla que contendra temporalemente las credenciales de los usuarios que ingresan correctamente';
+
+
+--
+-- TOC entry 215 (class 1255 OID 24651)
+-- Name: fn_credenciales_sel(smallint, integer); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_credenciales_sel(smallint, integer) RETURNS SETOF credenciales
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  tip alias for $1;
+  idc alias for $2;
+begin
+  if tip=0 then -- Consulta por id de credencial
+    return query select * from credenciales where cre_id=idc;
+  elsif tip=1 then -- Consulta de todas las credenciales
+    return query select * from credenciales;
+  end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_credenciales_sel(smallint, integer) OWNER TO usringenio;
+
+--
+-- TOC entry 2046 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: FUNCTION fn_credenciales_sel(smallint, integer); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_credenciales_sel(smallint, integer) IS 'Funcion que consulta o selecciona las credenciales';
+
+
+--
+-- TOC entry 216 (class 1255 OID 24652)
+-- Name: fn_credenciales_upd(integer); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_credenciales_upd(integer) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idc alias for $1;
+begin
+  update credenciales set cre_ultimaaccion=now() where cre_id=idc;
+  if found then
+    return 1; -- Actualizacion correcta
+  else
+    return 2; -- No existe la credencial a actualizar
+  end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_credenciales_upd(integer) OWNER TO usringenio;
+
+--
+-- TOC entry 2047 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: FUNCTION fn_credenciales_upd(integer); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_credenciales_upd(integer) IS 'Funcion que permite actualizar la fecha y hora de la ultima accion realizada desde el aplicativo';
+
+
+--
+-- TOC entry 217 (class 1255 OID 24653)
+-- Name: fn_credenciales_val(integer, integer); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_credenciales_val(integer, integer) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idc alias for $1;
+  idu alias for $2;
+  can int;
+begin
+  select count(*) into can from credenciales 
+      where cre_id=idc and cre_idusuario=idu 
+      and (select extract(epoch from (now()-cre_ultimaaccion))/60)<=(select valorparametro::integer from configuracion where parametro = 'TIEMPOCREDENCIAL' limit 1);
+  return can;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_credenciales_val(integer, integer) OWNER TO usringenio;
+
+--
+-- TOC entry 2048 (class 0 OID 0)
+-- Dependencies: 217
+-- Name: FUNCTION fn_credenciales_val(integer, integer); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_credenciales_val(integer, integer) IS 'Funcion que valida si la credencial existe o no';
+
+
+--
+-- TOC entry 192 (class 1255 OID 16421)
+-- Name: fn_objetos_del(character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetos_del(character varying) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	cod alias for $1;
+begin
+	delete from objetos where obj_codigo=cod;
+	if found then
+		return 1; -- Se borro el registro
+	else
+		return 2; -- Error de base de datos
+	end if;
+exception
+	when foreign_key_violation then
+		return 3; -- Existe informacion foranea
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_objetos_del(character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2049 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: FUNCTION fn_objetos_del(character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetos_del(character varying) IS 'Funcion que permite borrar registros de la tabla objetos';
+
+
+--
+-- TOC entry 193 (class 1255 OID 16422)
+-- Name: fn_objetos_ins(character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetos_ins(character varying, character varying, character varying) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	cod alias for $1;
+	nom alias for $2;
+	des alias for $3;
+begin
+	insert into objetos (obj_codigo, obj_nombre, obj_descripcion, obj_activo) values (cod, nom, des, default);
+	if found then
+		return 1; -- Se ingreso correctamente el registro
+	else
+		return 2; -- Error en la base de datos
+	end if;
+exception
+	when unique_violation then
+		return 3; -- Ya existe ese codigo
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_objetos_ins(character varying, character varying, character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2050 (class 0 OID 0)
+-- Dependencies: 193
+-- Name: FUNCTION fn_objetos_ins(character varying, character varying, character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetos_ins(character varying, character varying, character varying) IS 'Funcion que permite ingresar registros a la tabla objetos';
+
+
+--
+-- TOC entry 169 (class 1259 OID 16423)
+-- Name: objetos; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE objetos (
+    obj_codigo character varying(15) NOT NULL,
+    obj_nombre character varying(50) NOT NULL,
+    obj_descripcion character varying(100) NOT NULL,
+    obj_activo boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.objetos OWNER TO usringenio;
+
+--
+-- TOC entry 2051 (class 0 OID 0)
+-- Dependencies: 169
+-- Name: TABLE objetos; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE objetos IS 'Tabla que contiene los objetos del aplicativo';
+
+
+--
+-- TOC entry 194 (class 1255 OID 16427)
+-- Name: fn_objetos_sel(smallint, character varying, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetos_sel(smallint, character varying, character varying, boolean) RETURNS SETOF objetos
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	tip alias for $1;
+	cod alias for $2;
+	nom alias for $3;
+	act alias for $4;
+begin
+	if tip=0 then -- Consulta por codigo
+		return query select obj_codigo, obj_nombre, obj_descripcion, obj_activo from objetos where obj_codigo=cod;
+	elsif tip=1 then -- Conslta por nombre
+		return query select obj_codigo, obj_nombre, obj_descripcion, obj_activo from objetos where obj_nombre like nom;
+	elsif tip=2 then -- Consulta por activo
+		return query select obj_codigo, obj_nombre, obj_descripcion, obj_activo from objetos where obj_activo=act;
+	elsif tip=3 then -- Consulta de todos los registros
+		return query select obj_codigo, obj_nombre, obj_descripcion, obj_activo from objetos;
+	end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_objetos_sel(smallint, character varying, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2052 (class 0 OID 0)
+-- Dependencies: 194
+-- Name: FUNCTION fn_objetos_sel(smallint, character varying, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetos_sel(smallint, character varying, character varying, boolean) IS 'Funcion que retorna los objetos';
+
+
+--
+-- TOC entry 195 (class 1255 OID 16428)
+-- Name: fn_objetos_upd(character varying, character varying, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetos_upd(character varying, character varying, character varying, boolean) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	cod alias for $1;
+	nom alias for $2;
+	des alias for $3;
+	act alias for $4;
+begin
+	update objetos set obj_nombre=nom, obj_descripcion=des, obj_activo=act where obj_codigo=cod;
+	if found then
+		return 1;
+	else
+		return 2;
+	end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_objetos_upd(character varying, character varying, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2053 (class 0 OID 0)
+-- Dependencies: 195
+-- Name: FUNCTION fn_objetos_upd(character varying, character varying, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetos_upd(character varying, character varying, character varying, boolean) IS 'Funcion que permite actualizar la informacion de la tabla objetos';
+
+
+--
+-- TOC entry 196 (class 1255 OID 16429)
+-- Name: fn_objetosxperfil_triupdobj(); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetosxperfil_triupdobj() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+	insert into objetosxperfil select idperfil, NEW.obj_codigo, false, false, false, false, false from perfiles;
+return new;
+end;
+$$;
+
+
+ALTER FUNCTION public.fn_objetosxperfil_triupdobj() OWNER TO usringenio;
+
+--
+-- TOC entry 2054 (class 0 OID 0)
+-- Dependencies: 196
+-- Name: FUNCTION fn_objetosxperfil_triupdobj(); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetosxperfil_triupdobj() IS 'Funcion que permite actualizar la tabla objetosxperfil cuando se crea un nuevo objeto';
+
+
+--
+-- TOC entry 197 (class 1255 OID 16430)
+-- Name: fn_objetosxperfil_triupdper(); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetosxperfil_triupdper() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+	insert into objetosxperfil select NEW.idperfil, obj_codigo, false, false, false, false, false from objetos;
+return new;
+end;
+$$;
+
+
+ALTER FUNCTION public.fn_objetosxperfil_triupdper() OWNER TO usringenio;
+
+--
+-- TOC entry 2055 (class 0 OID 0)
+-- Dependencies: 197
+-- Name: FUNCTION fn_objetosxperfil_triupdper(); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetosxperfil_triupdper() IS 'Funcion que permite actualizar la tabla objetosxperfil cuando se crea un nuevo perfil';
+
+
+--
+-- TOC entry 198 (class 1255 OID 16431)
+-- Name: fn_objetosxperfil_val(smallint, smallint, character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_objetosxperfil_val(smallint, smallint, character varying) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	tip alias for $1;
+	per alias for $2;
+	obj alias for $3;
+	res int;
+begin
+	if tip=1 then -- Si es insertar
+		select count(*) into res from objetosxperfil where oxp_perfil=per and oxp_objeto=obj and oxp_insertar=true;
+	elsif tip=2 then -- Si es modificar
+		select count(*) into res from objetosxperfil where oxp_perfil=per and oxp_objeto=obj and oxp_modificar=true;
+	elsif tip=3 then -- Si es borrar
+		select count(*) into res from objetosxperfil where oxp_perfil=per and oxp_objeto=obj and oxp_borrar=true;
+	elsif tip=4 then -- Si es consultar
+		select count(*) into res from objetosxperfil where oxp_perfil=per and oxp_objeto=obj and oxp_consultar=true;
+	elsif tip=5 then -- Si es listar
+		select count(*) into res from objetosxperfil where oxp_perfil=per and oxp_objeto=obj and oxp_listar=true;
+	end if;
+return res;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_objetosxperfil_val(smallint, smallint, character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2056 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: FUNCTION fn_objetosxperfil_val(smallint, smallint, character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_objetosxperfil_val(smallint, smallint, character varying) IS 'Funcion que busca el permiso del perfil';
+
+
+--
+-- TOC entry 199 (class 1255 OID 16432)
+-- Name: fn_perfiles_del(smallint); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_perfiles_del(smallint) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	idp alias for $1;
+	res smallint :=0; -- Esta variable devolvera la respuesta (si es 0 no realizo ningun trabajo)
+begin
+	perform * from perfiles where idperfil = idp;
+	if found then
+		delete from perfiles where idperfil=idp;
+		if found then
+			res := 1; -- Se borro correctamente el registro
+		end if;
+	else
+		res := 2; -- No existe el perfil a eliminar
+	end if;
+return res;
+exception when foreign_key_violation then
+return 3; -- Si este registro tiene hijos, se devuelve 3 para informar
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_perfiles_del(smallint) OWNER TO usringenio;
+
+--
+-- TOC entry 2057 (class 0 OID 0)
+-- Dependencies: 199
+-- Name: FUNCTION fn_perfiles_del(smallint); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_perfiles_del(smallint) IS 'Funcion que borra registros de la tabla perfiles';
+
+
+--
+-- TOC entry 200 (class 1255 OID 16433)
+-- Name: fn_perfiles_ins(smallint, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_perfiles_ins(smallint, character varying, boolean) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idp alias for $1;
+  nom alias for $2;
+  act alias for $3; 
+  respuesta smallint := 0; -- Es el valor devuelto por la funcion (si es 0 no realizo ningun trabajo)
+begin
+      perform * from perfiles where nombre=nom;
+      if not found then
+         insert into perfiles values (idp, nom, act);
+         if found then
+            respuesta := 1; -- Se ingreso correctamente
+         end if;
+      else
+         respuesta := 2; -- Ya existe el nombre del perfil
+      end if;
+return respuesta;
+exception when unique_violation then
+return 3; -- Si el codigo ya existe, no se inserta y se avisa.
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_perfiles_ins(smallint, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2058 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: FUNCTION fn_perfiles_ins(smallint, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_perfiles_ins(smallint, character varying, boolean) IS 'Funcion que inserta datos en la tabla perfiles';
+
+
+--
+-- TOC entry 170 (class 1259 OID 16434)
+-- Name: perfiles; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE perfiles (
+    idperfil smallint NOT NULL,
+    nombre character varying(25) NOT NULL,
+    activo boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.perfiles OWNER TO usringenio;
+
+--
+-- TOC entry 2059 (class 0 OID 0)
+-- Dependencies: 170
+-- Name: TABLE perfiles; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE perfiles IS 'Tabla que contiene los perfiles de los usuarios del sistema';
+
+
+--
+-- TOC entry 201 (class 1255 OID 16438)
+-- Name: fn_perfiles_sel(smallint, smallint, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_perfiles_sel(smallint, smallint, character varying, boolean) RETURNS SETOF perfiles
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	tip alias for $1;
+	idp alias for $2;
+	nom alias for $3;
+	act alias for $4;
+begin
+	if tip=0 then -- Si el tipo de consulta es todos
+		return query select idperfil, nombre, activo from perfiles;
+	elsif tip=1 then -- Si el tipo de consulta es por idperfil
+		return query select idperfil, nombre, activo from perfiles where idperfil=idp;
+	elsif tip=2 then -- Si el tipo de consulta es por nombre del perfil
+		return query select idperfil, nombre, activo from perfiles where nombre like nom;
+	elsif tip=3 then -- Si el tipo de consulta es por si esta activo o no
+		return query select idperfil, nombre, activo from perfiles where activo = act;
+	end if;
+end;$_$;
+
+
+ALTER FUNCTION public.fn_perfiles_sel(smallint, smallint, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2060 (class 0 OID 0)
+-- Dependencies: 201
+-- Name: FUNCTION fn_perfiles_sel(smallint, smallint, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_perfiles_sel(smallint, smallint, character varying, boolean) IS 'Funcion que permite consultar la tabla perfiles';
+
+
+--
+-- TOC entry 202 (class 1255 OID 16439)
+-- Name: fn_perfiles_upd(smallint, character varying, boolean); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_perfiles_upd(smallint, character varying, boolean) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+	idp alias for $1;
+	nom alias for $2;
+	act alias for $3;
+	res smallint := 0; -- Este es el valor a devolver (si es 0 no realizo ningun trabajo)
+begin
+	perform * from perfiles where idperfil=idp;
+	if found then -- Si existe el codigo del perfil a modificar entonces:
+	   perform * from perfiles where nombre=nom and idperfil<>idp;
+	   if not found then
+		update perfiles set nombre=nom, activo=act where idperfil=idp;
+		if found then
+			res := 1; -- Actualizacion correcta
+		end if;
+	   else
+		res :=2; -- Ya existe ese nombre de perfil
+	   end if;
+	else -- Si no existe el codigo del perfil, no se hace nada
+		res := 3;
+	end if;
+return res;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_perfiles_upd(smallint, character varying, boolean) OWNER TO usringenio;
+
+--
+-- TOC entry 2061 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: FUNCTION fn_perfiles_upd(smallint, character varying, boolean); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_perfiles_upd(smallint, character varying, boolean) IS 'Funcion que actualiza la tabla perfiles';
+
+
+--
+-- TOC entry 203 (class 1255 OID 24625)
+-- Name: fn_usuarios_cla(integer, character varying, character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_usuarios_cla(integer, character varying, character varying) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idu alias for $1;
+  cla alias for $2;
+  cnu alias for $3;
+begin
+  perform * from usuarios where usu_id=idu and usu_clave=cla;
+  if found then
+    update usuarios set usu_clave=cnu where usu_id=idu;
+    if found then
+      return 1; -- Actualizacion correcta
+    else
+      return 2; -- Error de actualizacion
+    end if;
+  else
+    return 3; -- Clave anterior incorrecta
+  end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_usuarios_cla(integer, character varying, character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2062 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: FUNCTION fn_usuarios_cla(integer, character varying, character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_usuarios_cla(integer, character varying, character varying) IS 'Funcion que permite cambiar la clave del usuario';
+
+
+--
+-- TOC entry 211 (class 1255 OID 24634)
+-- Name: fn_usuarios_del(integer); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_usuarios_del(integer) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idu alias for $1;
+begin
+  delete from usuarios where usu_id=idu;
+  if found then
+    return 1; -- Se actualizo correctamente el registro
+  else
+    return 2; -- No se encontro el registro a modificar
+  end if;
+exception
+  when foreign_key_violation then
+    return 3; -- Tiene hijos y no se puede eliminar
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_usuarios_del(integer) OWNER TO usringenio;
+
+--
+-- TOC entry 2063 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: FUNCTION fn_usuarios_del(integer); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_usuarios_del(integer) IS 'Funcion que borra los registros de la tabla usuarios';
+
+
+--
+-- TOC entry 204 (class 1255 OID 24626)
+-- Name: fn_usuarios_ing(integer); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_usuarios_ing(integer) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idu alias for $1;
+begin
+  update usuarios set usu_ultimoingreso=now() where usu_id=idu;
+  if found then
+    return 1; -- Se actualizo correctamente el registro
+  else
+    return 2; -- No existe el usuario a actualizar
+  end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_usuarios_ing(integer) OWNER TO usringenio;
+
+--
+-- TOC entry 2064 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: FUNCTION fn_usuarios_ing(integer); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_usuarios_ing(integer) IS 'Funcion que actualiza la fecha del ultimo ingreso del usuario';
+
+
+--
+-- TOC entry 209 (class 1255 OID 24627)
+-- Name: fn_usuarios_ins(character varying, character varying, character varying, smallint, character varying); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION fn_usuarios_ins(character varying, character varying, character varying, smallint, character varying) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  cod alias for $1;
+  nom alias for $2;
+  ape alias for $3;
+  per alias for $4;
+  cor alias for $5;
+begin
+  insert into usuarios values (default, cod, nom, ape, default, per, default, default, cor);
+  if found then
+    return 1; -- Se ingreso correctamente el registro
+  else
+    return 2; -- Error de la base de datos
+  end if;
+exception 
+  when unique_violation then
+    return 3; -- Si ya existe el codigo a ingresar
+  when foreign_key_violation then
+    return 4; -- No existe el perfil a asignar
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_usuarios_ins(character varying, character varying, character varying, smallint, character varying) OWNER TO postgres;
+
+--
+-- TOC entry 2065 (class 0 OID 0)
+-- Dependencies: 209
+-- Name: FUNCTION fn_usuarios_ins(character varying, character varying, character varying, smallint, character varying); Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON FUNCTION fn_usuarios_ins(character varying, character varying, character varying, smallint, character varying) IS 'Funcion que permite ingresar los registros a la tabla usuarios';
+
+
+--
+-- TOC entry 218 (class 1255 OID 32771)
+-- Name: fn_usuarios_sel(smallint, integer, character varying, character varying, character varying, smallint, date, boolean, character varying, character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_usuarios_sel(smallint DEFAULT (-1), integer DEFAULT (-1), character varying DEFAULT ''::character varying, character varying DEFAULT ''::character varying, character varying DEFAULT ''::character varying, smallint DEFAULT (-1), date DEFAULT NULL::date, boolean DEFAULT NULL::boolean, character varying DEFAULT ''::character varying, character varying DEFAULT ''::character varying) RETURNS SETOF t_usuarios
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  tip alias for $1;
+  idu alias for $2;
+  cod alias for $3;
+  nom alias for $4;
+  ape alias for $5;
+  per alias for $6;
+  ing alias for $7;
+  blo alias for $8;
+  cor alias for $9;
+  cla alias for $10;
+begin
+  if tip=0 then -- Consulta de todos los registros
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil;
+  elsif tip=1 then -- Consulta por codigo de usuario
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_codigo=cod;
+  elsif tip=2 then -- Consulta por nombre de usuario
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_nombres like nom;
+  elsif tip=3 then -- Consulta por apellido de usuario
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_apellidos like ape;
+  elsif tip=4 then -- Consulta por perfil de usuario
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_perfil = per;
+  elsif tip=5 then -- Consulta por fecha de ingreso exacta
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where date(usu_ultimoingreso) = ing;
+  elsif tip=6 then -- Consulta por fecha de ingreso menor o igual a
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where date(usu_ultimoingreso) <= ing;
+  elsif tip=7 then -- Consulta por fecha de ingreso mayor o igual a
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where date(usu_ultimoingreso) >= ing;
+  elsif tip=8 then -- Consulta por bloqueado
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_bloqueado = blo;
+  elsif tip=9 then -- Consulta por correo
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_correo like cor;
+  elsif tip=10 then -- Consulta de autenticacion
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_codigo=cod and usu_clave=cla;
+  elsif tip=11 then -- Consulta por id de usuario
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where usu_id=idu;
+  elsif tip=12 then -- Consulta por si el perfil esta activo o no
+    return query select usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_perfil, perfiles.nombre, perfiles.activo, usu_ultimoingreso, usu_bloqueado, usu_correo
+    from usuarios inner join perfiles on usu_perfil=idperfil
+    where perfiles.activo = blo;
+  end if;
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_usuarios_sel(smallint, integer, character varying, character varying, character varying, smallint, date, boolean, character varying, character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2066 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: FUNCTION fn_usuarios_sel(smallint, integer, character varying, character varying, character varying, smallint, date, boolean, character varying, character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_usuarios_sel(smallint, integer, character varying, character varying, character varying, smallint, date, boolean, character varying, character varying) IS 'Funcion que consulta los registros de la tabla usuarios';
+
+
+--
+-- TOC entry 210 (class 1255 OID 24633)
+-- Name: fn_usuarios_upd(integer, character varying, character varying, character varying, smallint, boolean, boolean, character varying); Type: FUNCTION; Schema: public; Owner: usringenio
+--
+
+CREATE FUNCTION fn_usuarios_upd(integer, character varying, character varying, character varying, smallint, boolean, boolean, character varying) RETURNS smallint
+    LANGUAGE plpgsql
+    AS $_$
+declare
+  idu alias for $1;
+  cod alias for $2;
+  nom alias for $3;
+  ape alias for $4;
+  per alias for $5;
+  act alias for $6;
+  blo alias for $7;
+  cor alias for $8;
+begin
+  update usuarios set usu_codigo=cod, usu_nombres=nom, usu_apellidos=ape, usu_perfil=per, usu_activo=act, usu_bloqueado=blo, usu_correo=cor where usu_id=idu;
+  if found then
+    return 1; -- Se actualizo correctamente el registro
+  else
+    return 2; -- No se encontro el registro a modificar
+  end if;
+exception
+  when foreign_key_violation then
+    return 3; -- No existe el perfil a asignar
+  when unique_violation then
+    return 4; -- No se puede actualizar ese codigo de usuario
+end;
+$_$;
+
+
+ALTER FUNCTION public.fn_usuarios_upd(integer, character varying, character varying, character varying, smallint, boolean, boolean, character varying) OWNER TO usringenio;
+
+--
+-- TOC entry 2067 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: FUNCTION fn_usuarios_upd(integer, character varying, character varying, character varying, smallint, boolean, boolean, character varying); Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON FUNCTION fn_usuarios_upd(integer, character varying, character varying, character varying, smallint, boolean, boolean, character varying) IS 'Funcion que actualiza los registros de la tabla usuarios (exceptuando la clave)';
+
+
+--
+-- TOC entry 171 (class 1259 OID 16445)
+-- Name: objetosxperfil; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE objetosxperfil (
+    oxp_perfil smallint NOT NULL,
+    oxp_objeto character varying(15) NOT NULL,
+    oxp_insertar boolean DEFAULT false NOT NULL,
+    oxp_modificar boolean DEFAULT false NOT NULL,
+    oxp_borrar boolean DEFAULT false NOT NULL,
+    oxp_consultar boolean DEFAULT false NOT NULL,
+    oxp_listar boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.objetosxperfil OWNER TO usringenio;
+
+--
+-- TOC entry 2068 (class 0 OID 0)
+-- Dependencies: 171
+-- Name: TABLE objetosxperfil; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE objetosxperfil IS 'Estos son los permisos que tendra cada perfil';
+
+
+--
+-- TOC entry 172 (class 1259 OID 16453)
+-- Name: prueba; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE prueba (
+    hija smallint
+);
+
+
+ALTER TABLE public.prueba OWNER TO usringenio;
+
+--
+-- TOC entry 2069 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: TABLE prueba; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE prueba IS 'Hola';
+
+
+--
+-- TOC entry 175 (class 1259 OID 24607)
+-- Name: sqc_usuarios; Type: SEQUENCE; Schema: public; Owner: usringenio
+--
+
+CREATE SEQUENCE sqc_usuarios
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sqc_usuarios OWNER TO usringenio;
+
+--
+-- TOC entry 2070 (class 0 OID 0)
+-- Dependencies: 175
+-- Name: SEQUENCE sqc_usuarios; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON SEQUENCE sqc_usuarios IS 'Secuencia para el consecutivo de usuarios';
+
+
+--
+-- TOC entry 176 (class 1259 OID 24609)
+-- Name: usuarios; Type: TABLE; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+CREATE TABLE usuarios (
+    usu_id integer DEFAULT nextval('sqc_usuarios'::regclass) NOT NULL,
+    usu_codigo character varying(25) NOT NULL,
+    usu_nombres character varying(50) NOT NULL,
+    usu_apellidos character varying(50) NOT NULL,
+    usu_clave character varying(32) DEFAULT md5('Clave123+'::text) NOT NULL,
+    usu_perfil smallint NOT NULL,
+    usu_ultimoingreso timestamp without time zone DEFAULT now() NOT NULL,
+    usu_bloqueado boolean DEFAULT false NOT NULL,
+    usu_correo character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.usuarios OWNER TO usringenio;
+
+--
+-- TOC entry 2071 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: TABLE usuarios; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TABLE usuarios IS 'Tabla que contiene los usuarios del sistema. La clave puede ser vacia ya que el metodo de autenticacion puede ser desde LDAP. Pero es necesaria ya que esta tabla es la que contiene los perfiles de los usuarios.';
+
+
+--
+-- TOC entry 2018 (class 0 OID 24595)
+-- Dependencies: 174
+-- Data for Name: configuracion; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY configuracion (idconfiguracion, parametro, valorparametro, activo) FROM stdin;
+2	AUTENTICACION	BD	t
+3	TIEMPOCREDENCIAL	30	t
+5	PRUEBA	ACTUALIZADO CORRECTAMENTE	f
+\.
+
+
+--
+-- TOC entry 2021 (class 0 OID 24635)
+-- Dependencies: 177
+-- Data for Name: credenciales; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY credenciales (cre_id, cre_idusuario, cre_nombre, cre_hostip, cre_hostnombre, cre_creacion, cre_ultimaaccion) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2013 (class 0 OID 16423)
+-- Dependencies: 169
+-- Data for Name: objetos; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY objetos (obj_codigo, obj_nombre, obj_descripcion, obj_activo) FROM stdin;
+SEGPER	PERFILES DEL SISTEMA	PERFILES DEL SISTEMA	t
+SEGUSU	USUARIOS DEL SISTEMA	USUARIOS DEL SISTEMA	t
+CONFIG	CONFIGURACION DEL SISTEMA	PERMITE LA CONFIGURACION DEL SISTEMA	t
+\.
+
+
+--
+-- TOC entry 2015 (class 0 OID 16445)
+-- Dependencies: 171
+-- Data for Name: objetosxperfil; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY objetosxperfil (oxp_perfil, oxp_objeto, oxp_insertar, oxp_modificar, oxp_borrar, oxp_consultar, oxp_listar) FROM stdin;
+3	SEGUSU	f	f	f	f	f
+1	CONFIG	f	f	f	f	f
+2	CONFIG	f	f	f	f	f
+5	CONFIG	f	f	f	f	f
+7	CONFIG	f	f	f	f	f
+3	CONFIG	f	f	f	f	f
+3	SEGPER	t	f	f	f	f
+4	SEGPER	f	f	f	f	f
+4	SEGUSU	f	f	f	f	f
+4	CONFIG	f	f	f	f	f
+6	SEGPER	f	f	f	f	f
+6	SEGUSU	f	f	f	f	f
+6	CONFIG	f	f	f	f	f
+8	SEGPER	f	f	f	f	f
+8	SEGUSU	f	f	f	f	f
+8	CONFIG	f	f	f	f	f
+9	SEGPER	f	f	f	f	f
+9	SEGUSU	f	f	f	f	f
+9	CONFIG	f	f	f	f	f
+10	SEGPER	f	f	f	f	f
+10	SEGUSU	f	f	f	f	f
+10	CONFIG	f	f	f	f	f
+11	SEGPER	f	f	f	f	f
+11	SEGUSU	f	f	f	f	f
+11	CONFIG	f	f	f	f	f
+2	SEGPER	t	t	f	t	t
+\.
+
+
+--
+-- TOC entry 2014 (class 0 OID 16434)
+-- Dependencies: 170
+-- Data for Name: perfiles; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY perfiles (idperfil, nombre, activo) FROM stdin;
+1	Admin Sistema	t
+2	Probando no mas	t
+5	Pepito	t
+7	jasret	t
+3	Prueba Trigger	f
+4	LISTOS O QUE	t
+6	EXCELENTE	t
+8	Cajero	f
+9	Mesero	t
+10	YA EXPORTO	t
+11	RECORDANDO	t
+\.
+
+
+--
+-- TOC entry 2016 (class 0 OID 16453)
+-- Dependencies: 172
+-- Data for Name: prueba; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY prueba (hija) FROM stdin;
+1
+1
+1
+2
+\.
+
+
+--
+-- TOC entry 2072 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: sqc_configuracion; Type: SEQUENCE SET; Schema: public; Owner: usringenio
+--
+
+SELECT pg_catalog.setval('sqc_configuracion', 5, true);
+
+
+--
+-- TOC entry 2073 (class 0 OID 0)
+-- Dependencies: 168
+-- Name: sqc_credencial; Type: SEQUENCE SET; Schema: public; Owner: usringenio
+--
+
+SELECT pg_catalog.setval('sqc_credencial', 141, true);
+
+
+--
+-- TOC entry 2074 (class 0 OID 0)
+-- Dependencies: 175
+-- Name: sqc_usuarios; Type: SEQUENCE SET; Schema: public; Owner: usringenio
+--
+
+SELECT pg_catalog.setval('sqc_usuarios', 1, false);
+
+
+--
+-- TOC entry 2020 (class 0 OID 24609)
+-- Dependencies: 176
+-- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: usringenio
+--
+
+COPY usuarios (usu_id, usu_codigo, usu_nombres, usu_apellidos, usu_clave, usu_perfil, usu_ultimoingreso, usu_bloqueado, usu_correo) FROM stdin;
+\.
+
+
+--
+-- TOC entry 1992 (class 2606 OID 16464)
+-- Name: objetos_pkey; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY objetos
+    ADD CONSTRAINT objetos_pkey PRIMARY KEY (obj_codigo);
+
+
+--
+-- TOC entry 1998 (class 2606 OID 24601)
+-- Name: pk_configuracion; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY configuracion
+    ADD CONSTRAINT pk_configuracion PRIMARY KEY (idconfiguracion);
+
+
+--
+-- TOC entry 2004 (class 2606 OID 24642)
+-- Name: pk_cre_id; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY credenciales
+    ADD CONSTRAINT pk_cre_id PRIMARY KEY (cre_id);
+
+
+--
+-- TOC entry 1996 (class 2606 OID 16468)
+-- Name: pk_oxp_oxp; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY objetosxperfil
+    ADD CONSTRAINT pk_oxp_oxp PRIMARY KEY (oxp_perfil, oxp_objeto);
+
+
+--
+-- TOC entry 1994 (class 2606 OID 16470)
+-- Name: pk_per_id; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY perfiles
+    ADD CONSTRAINT pk_per_id PRIMARY KEY (idperfil);
+
+
+--
+-- TOC entry 2000 (class 2606 OID 24617)
+-- Name: pk_usuario; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY usuarios
+    ADD CONSTRAINT pk_usuario PRIMARY KEY (usu_id);
+
+
+--
+-- TOC entry 2002 (class 2606 OID 24619)
+-- Name: uk_usu_cod; Type: CONSTRAINT; Schema: public; Owner: usringenio; Tablespace: 
+--
+
+ALTER TABLE ONLY usuarios
+    ADD CONSTRAINT uk_usu_cod UNIQUE (usu_codigo);
+
+
+--
+-- TOC entry 2010 (class 2620 OID 16473)
+-- Name: tr_objetosxperfil_obj; Type: TRIGGER; Schema: public; Owner: usringenio
+--
+
+CREATE TRIGGER tr_objetosxperfil_obj AFTER INSERT ON objetos FOR EACH ROW EXECUTE PROCEDURE fn_objetosxperfil_triupdobj();
+
+
+--
+-- TOC entry 2075 (class 0 OID 0)
+-- Dependencies: 2010
+-- Name: TRIGGER tr_objetosxperfil_obj ON objetos; Type: COMMENT; Schema: public; Owner: usringenio
+--
+
+COMMENT ON TRIGGER tr_objetosxperfil_obj ON objetos IS 'Cada vez que se ingresa un nuevo registro a la tabla objetos, se crean los registros en la tabla objetosxperfil para cada perfil';
+
+
+--
+-- TOC entry 2011 (class 2620 OID 16474)
+-- Name: tr_objetosxperfil_per; Type: TRIGGER; Schema: public; Owner: usringenio
+--
+
+CREATE TRIGGER tr_objetosxperfil_per AFTER INSERT ON perfiles FOR EACH ROW EXECUTE PROCEDURE fn_objetosxperfil_triupdper();
+
+
+--
+-- TOC entry 2009 (class 2606 OID 24643)
+-- Name: fk_cre_usu; Type: FK CONSTRAINT; Schema: public; Owner: usringenio
+--
+
+ALTER TABLE ONLY credenciales
+    ADD CONSTRAINT fk_cre_usu FOREIGN KEY (cre_idusuario) REFERENCES usuarios(usu_id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2007 (class 2606 OID 16480)
+-- Name: fk_prueba; Type: FK CONSTRAINT; Schema: public; Owner: usringenio
+--
+
+ALTER TABLE ONLY prueba
+    ADD CONSTRAINT fk_prueba FOREIGN KEY (hija) REFERENCES perfiles(idperfil) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2008 (class 2606 OID 24620)
+-- Name: fk_usu_per; Type: FK CONSTRAINT; Schema: public; Owner: usringenio
+--
+
+ALTER TABLE ONLY usuarios
+    ADD CONSTRAINT fk_usu_per FOREIGN KEY (usu_perfil) REFERENCES perfiles(idperfil) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2005 (class 2606 OID 16490)
+-- Name: objetosxperfil_oxp_objetos_fkey; Type: FK CONSTRAINT; Schema: public; Owner: usringenio
+--
+
+ALTER TABLE ONLY objetosxperfil
+    ADD CONSTRAINT objetosxperfil_oxp_objetos_fkey FOREIGN KEY (oxp_objeto) REFERENCES objetos(obj_codigo) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2006 (class 2606 OID 16495)
+-- Name: objetosxperfil_oxp_perfil_fkey; Type: FK CONSTRAINT; Schema: public; Owner: usringenio
+--
+
+ALTER TABLE ONLY objetosxperfil
+    ADD CONSTRAINT objetosxperfil_oxp_perfil_fkey FOREIGN KEY (oxp_perfil) REFERENCES perfiles(idperfil) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2029 (class 0 OID 0)
+-- Dependencies: 6
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2013-03-06 21:25:07
+
+--
+-- PostgreSQL database dump complete
+--
+
