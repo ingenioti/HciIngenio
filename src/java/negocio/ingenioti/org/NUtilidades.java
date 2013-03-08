@@ -25,8 +25,10 @@ public final class NUtilidades {
         return creado;
     }
     public static void creaPiscina(ServletContext contexto){
-        contextoApp = contexto;
-        setPiscina();
+        if(!creado){
+            contextoApp = contexto;
+            setPiscina();
+        }
     }
     
     private static void setPiscina(){
