@@ -17,25 +17,37 @@ public class OUsuario implements IObjetoHci{
     private String codigo;
     private String nombre;
     private String apellido;
-    private String clave;
+    private String correo;
+    private String identificacion;
     private OPerfil perfil;
+    private String clave;
+    private boolean cambiarclave;
+    private Date fechacreacion;
     private Date ultimoingreso;
     private boolean bloqueado;
-    private String correo;
+    private Date fechabloqueado;
+    private Date fechadesbloqueado;
 
     public OUsuario() {
     }
 
-    public OUsuario(int id, String codigo, String nombre, String apellido, String clave, OPerfil perfil, Date ultimoingreso, boolean bloqueado, String correo) {
+    public OUsuario(int id, String codigo, String nombre, String apellido, String correo, 
+                    String identificacion, OPerfil perfil, String clave, boolean cambiarclave,
+                    Date fechacreacion, Date ultimoingreso, boolean bloqueado, Date fechabloqueado, Date fechadesbloqueado) {
         this.id = id;
         this.codigo = codigo;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.clave = clave;
+        this.correo = correo;
+        this.identificacion = identificacion;
         this.perfil = perfil;
+        this.clave = clave;
+        this.cambiarclave = cambiarclave;
+        this.fechacreacion = fechacreacion;
         this.ultimoingreso = ultimoingreso;
         this.bloqueado = bloqueado;
-        this.correo = correo;
+        this.fechabloqueado = fechabloqueado;
+        this.fechadesbloqueado = fechadesbloqueado;
     }
 
     public int getId() {
@@ -118,5 +130,45 @@ public class OUsuario implements IObjetoHci{
     @Override
     public String getXML(){
         return null;
+    }
+    
+    public String getIdentificacion() {
+        return identificacion;
+    }
+
+    public void setIdentificacion(String identificacion) {
+        this.identificacion = identificacion;
+    }
+
+    public boolean isCambiarclave() {
+        return cambiarclave;
+    }
+
+    public void setCambiarclave(boolean cambiarclave) {
+        this.cambiarclave = cambiarclave;
+    }
+
+    public Date getFechacreacion() {
+        return fechacreacion;
+    }
+
+    public void setFechacreacion(Date fechacreacion) {
+        this.fechacreacion = fechacreacion;
+    }
+
+    public Date getFechabloqueado() {
+        return fechabloqueado;
+    }
+
+    public void setFechabloqueado(Date fechabloqueado) {
+        this.fechabloqueado = fechabloqueado;
+    }
+
+    public Date getFechadesbloqueado() {
+        return fechadesbloqueado;
+    }
+
+    public void setFechadesbloqueado(Date fechadesbloqueado) {
+        this.fechadesbloqueado = fechadesbloqueado;
     }
 }
