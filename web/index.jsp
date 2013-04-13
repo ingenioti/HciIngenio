@@ -18,7 +18,7 @@
         </header>
         <section id="ingreso">
             <div id="ingresar">
-                <form action="" method="post">
+                <form action="SAutenticar" method="post">
                     <fieldset>
                         <legend>Autenticación</legend>
                         <div class="tipoTabla">
@@ -33,6 +33,14 @@
                             <div class="tipoFila">
                             <input type="submit" name="btnEnviar" value="Ingresar"/>
                             </div>
+                            <% if(request.getAttribute("mensaje")!=null){
+                            %>
+                                <div class="tipoFila error">
+                                    <%= request.getAttribute("mensaje") %>
+                                </div>
+                            <%
+                               }
+                            %>
                         </div>
                     </fieldset>
                 </form>

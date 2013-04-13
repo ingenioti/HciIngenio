@@ -20,6 +20,8 @@ public class OCredencial implements IObjetoHci {
     private Date creacion;
     private Date ultimaaccion;
 
+    public OCredencial(){}
+    
     public OCredencial(int id, OUsuario usuario, String hostip, String hostnombre, Date creacion, Date ultimaaccion) {
         this.id = id;
         this.usuario = usuario;
