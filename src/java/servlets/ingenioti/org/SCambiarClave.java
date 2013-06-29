@@ -5,6 +5,7 @@
 package servlets.ingenioti.org;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,14 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import objetos.ingenioti.org.OCredencial;
-import negocio.ingenioti.org.NAutenticacion;
+import negocio.ingenioti.org.NUsuarios;
 
 /**
  *
  * @author Alexys
  */
-@WebServlet(name = "SAutenticar", urlPatterns = {"/SAutenticar"})
-public class SAutenticar extends HttpServlet {
+@WebServlet(name = "SCambiarClave", urlPatterns = {"/SCambiarClave"})
+public class SCambiarClave extends HttpServlet {
 
     /**
      * Processes requests for both HTTP
@@ -34,26 +35,53 @@ public class SAutenticar extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession sesion = request.getSession(true);
+        HttpSession sesion = request.getSession();
         
+        String tipoRespuesta = "error";
         String mensaje = "";
-        String codigo = request.getParameter("txtUsr");
-        String clave  = request.getParameter("txtPwd");
-        String ipCliente = request.getRemoteAddr();
-        String hostCliente = request.getRemoteHost();
+        String tipoSolicitud = request.getParameter("ts"); // Nos indica si es tipo sincronica o asincronica (ajax)
+        String anterior = request.getParameter("txtAnterior");
+        String nueva    = request.getParameter("txtNueva");
+        String confirma = request.getParameter("txtConfirma");
+        OCredencial credencial = (OCredencial) sesion.getAttribute("credencial");
         
-        NAutenticacion autenticar = new NAutenticacion(codigo, clave, ipCliente, hostCliente);
-        OCredencial credencial = autenticar.autenticar();
-        if(credencial==null || credencial.getId()<=0){
-            mensaje = "Usuario o contraseña Inválidos!!!";
+        if(nueva.equals(confirma)){
+            NUsuarios nusuarios = new NUsuarios();
+            Short resultado = nusuarios.cambiarClave(credencial.getUsuario().getId(), anterior, nueva);
+            switch(resultado){
+                case 0:
+                    mensaje = "No se pudo realizar la acci&oacute;n de cambio de clave.";
+                    break;
+                case 1:
+                    mensaje = "Proceso realizado correctamente.";
+                    tipoRespuesta = "correcto";
+                    break;
+                case 2:
+                    mensaje = "Error de actualizaci&oacute;n en la BD.";
+                    break;
+                case 3:
+                    mensaje = "Clave anterior errada";
+            }
+        } else {
+            mensaje = "Clave de confirmaci&oacute;n no coincide.";
+        }
+        
+        if(tipoSolicitud.equals("normal")){
+            response.setContentType("text/html;charset=UTF-8");
+            request.setAttribute("tipoRespuesta", tipoRespuesta);
             request.setAttribute("mensaje", mensaje);
-            SUtilidades.irAPagina("/index.jsp", request, response, request.getServletContext());
-        } else { // Autenticado correctamente
-            sesion.setAttribute("credencial", credencial);
-            mensaje = "Bienvenido: "+credencial.getUsuario().getNombre();
-            request.setAttribute("mensaje", mensaje.trim());
             SUtilidades.irAPagina("/inicio.jsp", request, response, request.getServletContext());
+        } else if (tipoSolicitud.equals("ajax")){
+            response.setContentType("text/xml;charset=UTF-8");
+            PrintWriter salida = response.getWriter();
+            try{
+                salida.println("<mensaje>");
+                salida.println("<tipo>"+tipoRespuesta+"</tipo>");
+                salida.println("<contenido>"+mensaje+"</contenido>");
+                salida.println("</mensaje>");
+            } finally {
+                salida.close();
+            }   
         }
     }
 
