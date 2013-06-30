@@ -21,27 +21,25 @@
                 <form action="SAutenticar" method="post">
                     <fieldset>
                         <legend>Autenticación</legend>
-                        <div class="tipoTabla">
-                            <div class="tipoFila">
-                            <label for="txtUsr" class="tipoCelda">Usuario</label>
-                            <input type="text" autocomplete="false" id="txtUsr" name="txtUsr" placeholder="Digita tu usuario" />
-                            </div>
-                            <div class="tipoFila">
-                            <label for="txtPwd" class="tipoCelda">Clave</label>
-                            <input type="password" autocomplete="false" id="txtPwd" name="txtPwd" placeholder="Clave" />
-                            </div>
-                            <div class="tipoFila">
-                            <input type="submit" name="btnEnviar" value="Ingresar"/>
-                            </div>
-                            <% if(request.getAttribute("mensaje")!=null){
-                            %>
-                                <div class="tipoFila error">
-                                    <%= request.getAttribute("mensaje") %>
-                                </div>
-                            <%
-                               }
-                            %>
+                        <div class="datoFormulario">
+                            <label for="txtUsr" class="lblEntrada">Usuario</label>
+                            <input type="text" autofocus autocomplete="off" id="txtUsr" name="txtUsr" placeholder="Digita tu usuario" />
                         </div>
+                        <div class="datoFormulario">
+                            <label for="txtPwd" class="lblEntrada">Clave</label>
+                            <input type="password" autocomplete="off" id="txtPwd" name="txtPwd" placeholder="Clave" />
+                        </div>
+                        <div class="datoFormulario">
+                        <input type="submit" name="btnEnviar" value="Ingresar"/>
+                        </div>
+                        <% if(request.getAttribute("mensaje")!=null){
+                        %>
+                            <div class="error">
+                                    <%= request.getAttribute("mensaje") %>
+                            </div>
+                        <%
+                           }
+                        %>
                     </fieldset>
                 </form>
             </div>
