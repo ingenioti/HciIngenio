@@ -1,6 +1,9 @@
 *.class
 *.jar
 *.war
+*.png
 /build/
 /dist/
+/img/
 /web/js/jquery-1.9.1.min.js
+/web/js/bootstrap.min.js

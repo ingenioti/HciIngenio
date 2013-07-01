@@ -8,44 +8,44 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>JSP Page</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Herramientas para el control de información">
+        <meta name="author" content="Alexys Lozada">
+        <title>H.C.I. Herramientas para el control de información</title>
         <script src="js/jquery-1.9.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
         <link rel="stylesheet" href="css/estilo.css" />
     </head>
     <body>
         <header>
-        <h1>HCI Ingenio T.I.</h1>
+            <div class="hero-unit">
+                <h1>HCI Ingenio T.I.</h1>
+                <p>Una verdadera herramienta para controlar su información</p>
+            </div>
         </header>
         <section id="ingreso">
-            <div id="ingresar">
-                <form action="SAutenticar" method="post">
-                    <fieldset>
-                        <legend>Autenticación</legend>
-                        <div class="datoFormulario">
-                            <label for="txtUsr" class="lblEntrada">Usuario</label>
-                            <input type="text" autofocus autocomplete="off" id="txtUsr" name="txtUsr" placeholder="Digita tu usuario" />
+            <div class="container">
+                <form action="SAutenticar" method="post" class="form-signin">
+                    <h2 class="form-signin-heading">Autenticación</h2>
+                    <input class="input-block-level" type="text" autofocus autocomplete="off" id="txtUsr" name="txtUsr" placeholder="Digita tu usuario" />
+                    <input class="input-block-level" type="password" autocomplete="off" id="txtPwd" name="txtPwd" placeholder="Clave" />
+                    <input class="btn btn-large btn-primary" type="submit" name="btnEnviar" value="Ingresar"/>
+                    <% 
+                        if(request.getAttribute("mensaje")!=null){
+                    %>
+                        <div class="alert alert-error">
+                                <%= request.getAttribute("mensaje") %>
                         </div>
-                        <div class="datoFormulario">
-                            <label for="txtPwd" class="lblEntrada">Clave</label>
-                            <input type="password" autocomplete="off" id="txtPwd" name="txtPwd" placeholder="Clave" />
-                        </div>
-                        <div class="datoFormulario">
-                        <input type="submit" name="btnEnviar" value="Ingresar"/>
-                        </div>
-                        <% if(request.getAttribute("mensaje")!=null){
-                        %>
-                            <div class="error">
-                                    <%= request.getAttribute("mensaje") %>
-                            </div>
-                        <%
-                           }
-                        %>
-                    </fieldset>
+                    <%
+                       }
+                    %>
                 </form>
             </div>
         </section>
         <section>
-            <div id="estadoContexto"></div>
+            <div id="estadoContexto" class="alert"></div>
         </section>
         <script>
             $(document).on('ready',cargaConfiguracion);
@@ -63,18 +63,19 @@
                         });
                         switch(elTipo){
                             case 0:
-                                $("#estadoContexto").addClass("error");
+                                $("#estadoContexto").addClass("alert-error");
                                 break;
                             case 1:
-                                $("#estadoContexto").addClass("info");
+                                $("#estadoContexto").addClass("alert-info");
                                 break;
                             case 2:
-                                $("#estadoContexto").addClass("correcto");
+                                $("#estadoContexto").addClass("alert-success");
                                 break;
                         }
                         $("#estadoContexto").html(elMensaje);
                     },
                     error: function(jqXHR,estado,elerror){
+                        $("#estadoContexto").addClass("alert-error");
                         $("#estadoContexto").html(elerror);
                         console.log(estado);
                         console.log(elerror);

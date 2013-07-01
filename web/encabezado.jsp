@@ -1,19 +1,19 @@
-<%
-    String usuario="";
-    if(session.getAttribute("credencial")!=null){
-        objetos.ingenioti.org.OCredencial credencial = (objetos.ingenioti.org.OCredencial) session.getAttribute("credencial");
-        usuario = credencial.getUsuario().getNombre();
-    }
-%>
-<header>
-    <div id="divEncabezado">
-        <div id="divLogo">
-            <h1>HCI Total</h1>
-            <h2>Herramientas para el control de informaci&oacute;n</h2>
-        </div>
-        <div id="divContenidoEncabezado">
-            <div id="bienvenidaUsuario">Bienvenido <%=usuario%></div>
-            <p>Aqu&iacute; va un men&uacute; principal</p>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="#">HCI Total</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Inicio</a></li>
+                    <li><a href="#about">Acerca de</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
         </div>
     </div>
-</header>
+</div>
