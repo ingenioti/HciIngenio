@@ -21,12 +21,12 @@ public class NGeneralidades {
     protected CallableStatement sentenciaProcedimiento = null;
     protected ResultSet resultados = null;
     
-    protected void setConsulta(String s){
+    protected void conectar(String s) throws SQLException{
         this.consulta = s;
-    }
-    
-    protected void getConexion() throws SQLException{
-        this.conexion = NUtilidades.getConexion();
+        if(this.conexion==null){
+            this.conexion = NUtilidades.getConexion();
+        }
+        this.sentenciaProcedimiento = this.conexion.prepareCall(consulta);
     }
     
     protected void cerrarConexion() throws SQLException{
@@ -61,10 +61,6 @@ public class NGeneralidades {
     
     protected void getResultadosPreparada() throws SQLException{
         this.resultados = this.sentenciaPreparada.executeQuery();
-    }
-    
-    protected void setSentenciaProcedimiento() throws SQLException{
-        this.sentenciaProcedimiento = this.conexion.prepareCall(consulta);
     }
     
     protected void getResultadosProcedimiento() throws SQLException{

@@ -86,6 +86,6 @@ public class OCredencial implements IObjetoHci {
     
     @Override
     public String getXML(){
-        return null;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

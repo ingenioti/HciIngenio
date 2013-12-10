@@ -1,6 +1,6 @@
 <%-- 
-    Document   : inicio
-    Created on : 13/04/2013, 05:11:32 PM
+    Document   : cambiarclave
+    Created on : 07/12/2013, 05:11:32 PM
     Author     : Alexys
 --%>
 <%
@@ -10,7 +10,7 @@
         usuario = credencial.getUsuario().getNombre();
         if(usuario.length()<=0){
             response.sendRedirect("index.jsp");
-        } 
+        }
     } else {
         response.sendRedirect("index.jsp");
     }
@@ -35,9 +35,17 @@
         </header>
         <section>
             <div class="container">
-                <h1>Bienvenido.</h1>
-                <p>Inicie aquí su proyecto.</p>
-                <p><%=usuario%></p>
+                <h1>Cambio de Clave.</h1>
+                <p>Formulario para el cambio de clave.</p>
+                <form action="SCambiarClave" method="post" class="form-signin">
+                    <h2 class="form-signin-heading">Cambio de clave</h2>
+                    <input type="hidden" name="ts" value="normal">
+                    <input class="input-block-level" autofocus autocomplete="off" type="password" id="txtAnterior" name="txtAnterior" placeholder="Clave Actual">
+                    <input class="input-block-level" autocomplete="off" type="password" id="txtNueva" name="txtNueva" placeholder="Clave Nueva">
+                    <input class="input-block-level" autocomplete="off" type="password" id="txtConfirma" name="txtConfirma" placeholder="Confirmar Clave">
+                    <input class="btn btn-large btn-primary" type="submit" name="btnCambiar" value="Cambiar Contraseña">
+                </form>
+                    
                 <p>
                     <% 
                         if(request.getAttribute("mensaje")!=null){

@@ -15,6 +15,13 @@
     padding-bottom: 40px;
 }
 
+h2{
+    padding-left: 15%;
+}
+
+input[type="text"]{
+    text-transform: uppercase;
+}
 /***********************/
 /*** CLASES          ***/
 /***********************/
@@ -41,6 +48,9 @@
   height: auto;
   margin-bottom: 15px;
   padding: 7px 9px;
+}
+.navbar {
+  margin-bottom: 20px;
 }
 /*********************/
 /*** DIVS          ***/

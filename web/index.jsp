@@ -15,12 +15,16 @@
         <script src="js/jquery-1.9.1.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="css/bootstrap.min.css" />
-        <link rel="stylesheet" href="css/bootstrap-responsive.min.css" />
         <link rel="stylesheet" href="css/estilo.css" />
+        <style>
+            input[type="text"]{
+                text-transform: none;
+            }
+        </style>
     </head>
     <body>
         <header>
-            <div class="hero-unit">
+            <div class="jumbotron">
                 <h1>HCI Ingenio T.I.</h1>
                 <p>Una verdadera herramienta para controlar su información</p>
             </div>

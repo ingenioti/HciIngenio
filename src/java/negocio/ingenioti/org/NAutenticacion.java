@@ -47,9 +47,7 @@ public class NAutenticacion extends NGeneralidades{
     
     public OCredencial autenticar(){
         try{
-            setConsulta("select * from fn_usuarios_sel(?, null, ?, null, null, null, null, null, null, null, null, null, null, null, md5(?))");
-            getConexion();
-            setSentenciaProcedimiento();
+            conectar("select * from fn_usuarios_sel(?, null, ?, null, null, null, null, null, null, null, null, null, null, null, md5(?))");
             sentenciaProcedimiento.setShort(1, Short.parseShort(String.valueOf(23)));
             sentenciaProcedimiento.setString(2, this.codigo);
             sentenciaProcedimiento.setString(3, this.clave);
@@ -75,8 +73,7 @@ public class NAutenticacion extends NGeneralidades{
                 usuario.setFechabloqueado(resultados.getDate("fechabloqueado"));
                 usuario.setFechadesbloqueado(resultados.getDate("fechadesbloqueado"));
                 // Se inserta en la base de credenciales
-                setConsulta("select * from fn_credenciales_ins(?, ?, ?, ?)");
-                setSentenciaProcedimiento();
+                conectar("select * from fn_credenciales_ins(?, ?, ?, ?)");
                 sentenciaProcedimiento.setInt(1, usuario.getId());
                 sentenciaProcedimiento.setString(2, usuario.getNombre()+' '+usuario.getApellido());
                 sentenciaProcedimiento.setString(3, this.ipCliente);
@@ -102,5 +99,49 @@ public class NAutenticacion extends NGeneralidades{
             } catch (SQLException sqle){}
         }
         return credencial;
-    } 
+    }
+    
+    public boolean cerrarSesion(OUsuario usuario){
+        try{
+            conectar("select * from fn_credenciales_del(?)");
+            sentenciaProcedimiento.setInt(1, usuario.getId());
+            getResultadosProcedimiento();
+            if(resultados.next()){
+                if(resultados.getInt(1)==1){
+                    return true;
+                }
+            }
+        } catch (SQLException sqle){
+            System.err.println("Error de sql en NAutenticacion.java: "+sqle.getMessage());
+        } finally {
+            try{
+                cerrarConexion();
+            } catch (SQLException sqle){}
+        }
+        return false;
+    }
+    
+    public boolean tienePermiso(Short tipoDeAccion, Short perfil, String objeto){
+        boolean tiene = false;
+        try{
+            conectar("select * from fn_objetosxperfil_val(?,?,?)");
+            sentenciaProcedimiento.setShort(1,tipoDeAccion);
+            sentenciaProcedimiento.setShort(2,perfil);
+            sentenciaProcedimiento.setString(3, objeto);
+            getResultadosProcedimiento();
+            if(resultados.next()){
+                if(resultados.getShort(1)>0){
+                    tiene = true;
+                }
+            }
+        } catch (SQLException sqle){
+            System.err.println("Error NAutenticacion tienePermiso: "+sqle.getMessage());
+        } finally {
+            try{
+                cerrarConexion();
+            } catch (SQLException sqle){}
+        }
+        return tiene;
+    }
+
 }

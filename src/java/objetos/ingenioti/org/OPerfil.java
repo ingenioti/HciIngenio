@@ -11,7 +11,7 @@ import interfaces.ingenioti.org.IObjetoHci;
  * @version 1.0
  */
 public class OPerfil implements IObjetoHci {
-    private short idperfil;
+    private Short idperfil;
     private String nombre;
     private boolean activo;
 
@@ -24,7 +24,7 @@ public class OPerfil implements IObjetoHci {
         this.activo = activo;
     }
 
-    public short getIdperfil() {
+    public Short getIdperfil() {
         return idperfil;
     }
 

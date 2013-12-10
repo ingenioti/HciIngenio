@@ -5,7 +5,6 @@
 package servlets.ingenioti.org;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import negocio.ingenioti.org.NAutenticacion;
 /**
  *
  * @author Alexys
@@ -48,12 +47,16 @@ public final class SUtilidades extends HttpServlet {
      * @throws javax.servlet.ServletException
      * @throws java.io.IOException
      */
-    protected static boolean autenticado( HttpServletRequest solicitud,
-                            HttpServletResponse respuesta, HttpSession sesion)
+    protected static boolean autenticado(HttpSession sesion)
             throws ServletException, IOException{
         if (sesion == null || sesion.getAttribute("credencial") == null){ /* No autenticado */
           return (false);
         }
         return (true);
+    }
+    
+    protected static boolean tienePermiso(Short tipoDeAccion, Short perfil, String objeto){
+        NAutenticacion autenticacion = new NAutenticacion();
+        return autenticacion.tienePermiso(tipoDeAccion, perfil, objeto);
     }
 }

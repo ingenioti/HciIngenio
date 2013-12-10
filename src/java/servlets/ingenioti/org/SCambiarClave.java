@@ -37,51 +37,60 @@ public class SCambiarClave extends HttpServlet {
         
         HttpSession sesion = request.getSession();
         
-        String tipoRespuesta = "error";
-        String mensaje = "";
-        String tipoSolicitud = request.getParameter("ts"); // Nos indica si es tipo sincronica o asincronica (ajax)
-        String anterior = request.getParameter("txtAnterior");
-        String nueva    = request.getParameter("txtNueva");
-        String confirma = request.getParameter("txtConfirma");
-        OCredencial credencial = (OCredencial) sesion.getAttribute("credencial");
-        
-        if(nueva.equals(confirma)){
-            NUsuarios nusuarios = new NUsuarios();
-            Short resultado = nusuarios.cambiarClave(credencial.getUsuario().getId(), anterior, nueva);
-            switch(resultado){
-                case 0:
-                    mensaje = "No se pudo realizar la acci&oacute;n de cambio de clave.";
-                    break;
-                case 1:
-                    mensaje = "Proceso realizado correctamente.";
-                    tipoRespuesta = "correcto";
-                    break;
-                case 2:
-                    mensaje = "Error de actualizaci&oacute;n en la BD.";
-                    break;
-                case 3:
-                    mensaje = "Clave anterior errada";
+        if(SUtilidades.autenticado(sesion)){
+            String tipoRespuesta = "error";
+            String mensaje = "";
+            String tipoSolicitud = request.getParameter("ts"); // Nos indica si es tipo sincronica o asincronica (ajax)
+            String anterior = request.getParameter("txtAnterior");
+            String nueva    = request.getParameter("txtNueva");
+            String confirma = request.getParameter("txtConfirma");
+            OCredencial credencial = (OCredencial) sesion.getAttribute("credencial");
+
+            if(nueva.equals(confirma)){
+                NUsuarios nusuarios = new NUsuarios();
+                Short resultado = nusuarios.cambiarClave(credencial.getUsuario().getId(), anterior, nueva);
+                switch(resultado){
+                    case 0:
+                        mensaje = "No se pudo realizar la acci&oacute;n de cambio de clave.";
+                        break;
+                    case 1:
+                        mensaje = "Proceso realizado correctamente.";
+                        tipoRespuesta = "correcto";
+                        break;
+                    case 2:
+                        mensaje = "Error de actualizaci&oacute;n en la BD.";
+                        break;
+                    case 3:
+                        mensaje = "Clave anterior errada";
+                }
+            } else {
+                mensaje = "Clave de confirmaci&oacute;n no coincide.";
+            }
+
+            if(tipoSolicitud.equals("normal")){
+                response.setContentType("text/html;charset=UTF-8");
+                request.setAttribute("tipoRespuesta", tipoRespuesta);
+                request.setAttribute("mensaje", mensaje);
+                SUtilidades.irAPagina("/cambiarclave.jsp", request, response, request.getServletContext());
+            } else if (tipoSolicitud.equals("ajax")){
+                //response.setContentType("text/xml;charset=UTF-8");
+                response.setContentType("text/plain;charset=UTF-8");
+                PrintWriter salida = response.getWriter();
+                try{
+                    /*salida.println("<mensaje>");
+                    salida.println("<tipo>"+tipoRespuesta+"</tipo>");
+                    salida.println("<contenido>"+mensaje+"</contenido>");
+                    salida.println("</mensaje>");*/
+                    salida.println("{");
+                    salida.println("\"tipo\":\""+tipoRespuesta+"\",");
+                    salida.println("\"contenido\":\""+mensaje+"\"");
+                    salida.println("}");
+                } finally {
+                    salida.close();
+                }   
             }
         } else {
-            mensaje = "Clave de confirmaci&oacute;n no coincide.";
-        }
-        
-        if(tipoSolicitud.equals("normal")){
-            response.setContentType("text/html;charset=UTF-8");
-            request.setAttribute("tipoRespuesta", tipoRespuesta);
-            request.setAttribute("mensaje", mensaje);
-            SUtilidades.irAPagina("/inicio.jsp", request, response, request.getServletContext());
-        } else if (tipoSolicitud.equals("ajax")){
-            response.setContentType("text/xml;charset=UTF-8");
-            PrintWriter salida = response.getWriter();
-            try{
-                salida.println("<mensaje>");
-                salida.println("<tipo>"+tipoRespuesta+"</tipo>");
-                salida.println("<contenido>"+mensaje+"</contenido>");
-                salida.println("</mensaje>");
-            } finally {
-                salida.close();
-            }   
+            SUtilidades.irAPagina("/index.jsp", request, response, null);
         }
     }
 
